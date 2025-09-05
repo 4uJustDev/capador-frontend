@@ -1,10 +1,10 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { HomePage } from 'src/pages/home';
-import { AboutPage } from 'src/pages/about';
-import { Header } from 'src/widgets/header';
+import HomePage from 'src/pages/home';
+import AboutPage from 'src/pages/about';
+import Header from 'src/widgets/header';
 
-function App() {
+const App: React.FC = () => {
   return (
     <ChakraProvider>
       <BrowserRouter>
@@ -16,6 +16,6 @@ function App() {
       </BrowserRouter>
     </ChakraProvider>
   );
-}
+};
 
 export default App;

@@ -1,43 +1,32 @@
-import { Flex, Button, Container, Text } from '@chakra-ui/react';
-// import { useColorMode } from '@/components/ui/color-mode';
+import { Grid, Box, Button, Text } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import { LuShoppingCart, LuInfo } from 'react-icons/lu';
 
-export const Header = () => {
-  // const { colorMode, toggleColorMode } = useColorMode();
-
+const Header: React.FC = () => {
   return (
-    <Flex as="header" p={4} align="center" justify="space-between" borderBottom="1px solid">
-      <Container flex="1" />
+    <Grid
+      as="header"
+      templateColumns="1fr auto 1fr"
+      alignItems="center"
+      py={4}
+      px={4}
+      borderBottomWidth="1px"
+    >
+      <Box />
 
-      <Flex flex="1" justify="center">
-        <Link to="/">
-          <Text>CAPADOR</Text>
-        </Link>
-      </Flex>
+      <Text fontSize="2xl">
+        <Link to="/">CAPADOR</Link>
+      </Text>
 
-      <Flex flex="1" gap="1" justify="flex-end">
-        <Link to="/shop">
-          <Button>
-            <LuShoppingCart /> Shop
-          </Button>
-        </Link>
-        <Link to="/about">
-          <Button>
-            <LuInfo /> About
-          </Button>
-        </Link>
-
-        {/* <Link to="/user">
-          <IconButton variant="outline">
-            <LuUser />
-          </IconButton>
-        </Link> */}
-
-        {/* <IconButton ml="5" variant="outline" onClick={toggleColorMode}>
-          {colorMode === 'light' ? <LuSun /> : <LuMoon />}
-        </IconButton> */}
-      </Flex>
-    </Flex>
+      <Box justifySelf="end" display="flex" gap="2">
+        <Button as={Link} to="/shop" leftIcon={<LuShoppingCart />}>
+          Shop
+        </Button>
+        <Button as={Link} to="/about" leftIcon={<LuInfo />}>
+          About
+        </Button>
+      </Box>
+    </Grid>
   );
 };
+export default Header;
