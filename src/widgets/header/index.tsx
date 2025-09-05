@@ -1,7 +1,7 @@
-import { Flex, IconButton, Button, Container, Text } from '@chakra-ui/react';
+import { Flex, Button, Container, Text } from '@chakra-ui/react';
 // import { useColorMode } from '@/components/ui/color-mode';
 import { Link } from 'react-router-dom';
-import { LuMoon, LuSun, LuShoppingCart, LuUser, LuInfo } from 'react-icons/lu';
+import { LuShoppingCart, LuInfo } from 'react-icons/lu';
 
 export const Header = () => {
   // const { colorMode, toggleColorMode } = useColorMode();
