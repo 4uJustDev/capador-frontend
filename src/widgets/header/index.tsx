@@ -19,11 +19,15 @@ const Header: React.FC = () => {
       </Text>
 
       <Box justifySelf="end" display="flex" gap="2">
-        <Button as={Link} to="/shop" leftIcon={<LuShoppingCart />}>
-          Shop
+        <Button asChild as={Link} colorPalette="teal" variant="outline">
+          <a href="/shop">
+            <LuShoppingCart /> Shop
+          </a>
         </Button>
-        <Button as={Link} to="/about" leftIcon={<LuInfo />}>
-          About
+        <Button asChild as={Link} colorPalette="teal" variant="outline">
+          <a href="/about">
+            <LuInfo /> About
+          </a>
         </Button>
       </Box>
     </Grid>

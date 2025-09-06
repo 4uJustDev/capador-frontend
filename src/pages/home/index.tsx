@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Spinner, Alert, AlertIcon, Code } from '@chakra-ui/react';
+import { Box, Spinner, Code } from '@chakra-ui/react';
 import { http } from 'src/shared/api/http';
 import { toErrorMessage } from 'src/shared/api/error';
 import type { ICategory } from 'src/entities';
@@ -7,7 +7,6 @@ import type { ICategory } from 'src/entities';
 const HomePage: React.FC = () => {
   const [data, setData] = useState<ICategory[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     let alive = true;
@@ -16,7 +15,7 @@ const HomePage: React.FC = () => {
         const res = await http.get<ICategory[]>('/categories/tree');
         if (alive) setData(res.data);
       } catch (e) {
-        if (alive) setErr(toErrorMessage(e));
+        if (alive) console.error(toErrorMessage(e));
       } finally {
         if (alive) setLoading(false);
       }
@@ -31,15 +30,6 @@ const HomePage: React.FC = () => {
       <Box p={4}>
         <Spinner />
       </Box>
-    );
-  }
-
-  if (err) {
-    return (
-      <Alert status="error" p={4}>
-        <AlertIcon />
-        {err}
-      </Alert>
     );
   }
 

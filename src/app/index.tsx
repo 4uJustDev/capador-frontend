@@ -1,4 +1,4 @@
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import HomePage from 'src/pages/home';
 import AboutPage from 'src/pages/about';
@@ -6,7 +6,7 @@ import Header from 'src/widgets/header';
 
 const App: React.FC = () => {
   return (
-    <ChakraProvider>
+    <ChakraProvider value={defaultSystem}>
       <BrowserRouter>
         <Header />
         <Routes>
