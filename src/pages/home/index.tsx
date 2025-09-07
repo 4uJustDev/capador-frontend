@@ -3,7 +3,7 @@ import { Box, Spinner, Image, SimpleGrid, Text } from '@chakra-ui/react';
 import { http } from 'src/shared/api/http';
 import { toErrorMessage } from 'src/shared/api/error';
 import { mediaUrl } from 'src/shared/api/media';
-// import type { ICategory } from 'src/entities';
+import CategoryViewer from 'src/widgets/categoryViewer';
 
 type ProductPhoto = {
   thumbpath: string;
@@ -20,7 +20,6 @@ type Product = {
 };
 
 const HomePage: React.FC = () => {
-  const [categories, setCategories] = useState<any[] | null>(null);
   const [products, setProducts] = useState<Product[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -28,12 +27,9 @@ const HomePage: React.FC = () => {
     let alive = true;
     (async () => {
       try {
-        const [catsRes, prodRes] = await Promise.all([
-          http.get('/categories/tree'),
-          http.get<Product[]>('/products'),
-        ]);
+        const prodRes = await http.get<Product[]>('/products');
         if (!alive) return;
-        setCategories(catsRes.data);
+
         setProducts(prodRes.data);
       } catch (e) {
         if (alive) console.error(toErrorMessage(e));
@@ -55,39 +51,33 @@ const HomePage: React.FC = () => {
   }
 
   return (
-    <Box p={4}>
-      <Text mb={3} fontWeight="bold">
-        START PAGE
-      </Text>
-
-      {/* Сетка товаров с картинками */}
-      <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} gap={4} mb={8}>
-        {products?.map((p) => {
-          const thumb = p.photos?.[0]?.filepath; // бери is_main если нужно
-          return (
-            <Box key={p.id} borderWidth="1px" borderRadius="md" p={2}>
-              <Image
-                src={mediaUrl(thumb)} // <-- абсолютный URL
-                alt={p.name}
-                objectFit="cover"
-                w="100%"
-                aspectRatio={1} // квадратная карточка
-              />
-              <Text mt={2} fontWeight="semibold">
-                {p.name}
-              </Text>
-              <Text fontSize="sm" opacity={0.8}>
-                {p.price} ₽
-              </Text>
-            </Box>
-          );
-        })}
-      </SimpleGrid>
-
-      {/* Если все еще нужно увидеть сырые данные: */}
-      {/* <Code display="block" whiteSpace="pre" mt={4}>{JSON.stringify(categories, null, 2)}</Code> */}
-      {/* <Code display="block" whiteSpace="pre" mt={4}>{JSON.stringify(products, null, 2)}</Code> */}
-    </Box>
+    <>
+      <CategoryViewer></CategoryViewer>
+      <Box p={4}>
+        <SimpleGrid columns={{ base: 2, md: 3, lg: 4 }} gap={4} mb={8}>
+          {products?.map((p) => {
+            const thumb = p.photos?.[0]?.filepath;
+            return (
+              <Box key={p.id} borderWidth="1px" borderRadius="md" p={2}>
+                <Image
+                  src={mediaUrl(thumb)}
+                  alt={p.name}
+                  objectFit="cover"
+                  w="100%"
+                  aspectRatio={1}
+                />
+                <Text mt={2} fontWeight="semibold">
+                  {p.name}
+                </Text>
+                <Text fontSize="sm" opacity={0.8}>
+                  {p.price} ₽
+                </Text>
+              </Box>
+            );
+          })}
+        </SimpleGrid>
+      </Box>
+    </>
   );
 };
 
