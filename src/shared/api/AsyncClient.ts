@@ -1,8 +1,8 @@
 import axios, { type AxiosRequestConfig, type AxiosError, type AxiosInstance } from 'axios';
 
-export type ApiError = { status?: number; code?: string; message: string; details?: unknown };
+type ApiError = { status?: number; code?: string; message: string; details?: unknown };
 
-export function toApiError(err: unknown): ApiError {
+function toApiError(err: unknown): ApiError {
   const e = err as AxiosError<any>;
   if (e?.isAxiosError) {
     return {
@@ -68,9 +68,22 @@ class AsyncClient {
     return this.core<T>(opts, true);
   }
 
+  getMedia<T>(path: string, opts: Omit<AxiosRequestConfig, 'method' | 'data' | 'url'> = {}) {
+    return this.request<T>({ ...opts, url: path, method: 'get' });
+  }
+
   get<T>(path: string, opts: Omit<AxiosRequestConfig, 'method' | 'data' | 'url'> = {}) {
     return this.request<T>({ ...opts, url: path, method: 'get' });
   }
 }
 
 export const _Async = new AsyncClient(http);
+
+export function mediaUrl(path?: string) {
+  if (!path) {
+    return '/placeholder.png';
+  }
+
+  const clean = path.replace(/^\/+/, '');
+  return import.meta.env.VITE_API_BASE_URL + '/' + clean;
+}

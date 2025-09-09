@@ -1,33 +1,26 @@
-import { TreeView, createTreeCollection } from '@chakra-ui/react';
+import { TreeView, createTreeCollection, Box, Spinner, Alert } from '@chakra-ui/react';
 import { LuFile, LuFolder } from 'react-icons/lu';
 import type { ICategory } from 'src/entities';
 
 import { useEffect, useState } from 'react';
-import { Box, Spinner } from '@chakra-ui/react';
-import { toErrorMessage } from 'src/shared/api/error';
 import { _Async } from 'src/shared/api/AsyncClient';
 
 const CategoryViewer: React.FC = () => {
   const [categories, setCategories] = useState<ICategory[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    let alive = true;
     (async () => {
       try {
-        const categories = await _Async.get<ICategory[]>('/categories/tree');
-        if (!alive) return;
-
-        setCategories(categories);
-      } catch (e) {
-        if (alive) console.error(toErrorMessage(e));
+        const data = await _Async.get<ICategory[]>('/categories/tree');
+        setCategories(data);
+      } catch (e: any) {
+        if (e?.code !== 'ERR_CANCELED') setError(e.message ?? 'Failed to load categories');
       } finally {
-        if (alive) setLoading(false);
+        setLoading(false);
       }
     })();
-    return () => {
-      alive = false;
-    };
   }, []);
 
   if (loading) {
@@ -35,6 +28,15 @@ const CategoryViewer: React.FC = () => {
       <Box p={4}>
         <Spinner />
       </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert.Root status="error">
+        <Alert.Indicator />
+        <Alert.Title>{error}</Alert.Title>
+      </Alert.Root>
     );
   }
 
