@@ -10,7 +10,7 @@ export type RequestOpts = {
 };
 
 const http: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE,
+  baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 15000,
 });
 
