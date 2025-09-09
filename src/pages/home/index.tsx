@@ -1,30 +1,17 @@
 import { useEffect, useState } from 'react';
 import { Box, Spinner, Image, SimpleGrid, Text } from '@chakra-ui/react';
 import { _Async, mediaUrl } from 'src/shared/api/AsyncClient';
-
-type ProductPhoto = {
-  thumbpath: string;
-  filepath: string;
-  is_main: boolean;
-  id: number;
-  product_id: number;
-};
-type Product = {
-  id: number;
-  name: string;
-  price: string;
-  photos?: ProductPhoto[];
-};
+import type { IProduct } from 'src/entities';
 
 const HomePage: React.FC = () => {
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<IProduct[] | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        const products = await _Async.get<Product[]>('/products/category/1');
+        const products = await _Async.get<IProduct[]>('/products/category/1');
         if (!alive) return;
 
         setProducts(products);
