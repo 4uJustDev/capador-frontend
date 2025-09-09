@@ -68,10 +68,6 @@ class AsyncClient {
     return this.core<T>(opts, true);
   }
 
-  getMedia<T>(path: string, opts: Omit<AxiosRequestConfig, 'method' | 'data' | 'url'> = {}) {
-    return this.request<T>({ ...opts, url: path, method: 'get' });
-  }
-
   get<T>(path: string, opts: Omit<AxiosRequestConfig, 'method' | 'data' | 'url'> = {}) {
     return this.request<T>({ ...opts, url: path, method: 'get' });
   }
