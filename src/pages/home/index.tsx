@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Box, Spinner, Image, SimpleGrid, Text } from '@chakra-ui/react';
-import { http } from 'src/shared/api/http';
 import { toErrorMessage } from 'src/shared/api/error';
 import { mediaUrl } from 'src/shared/api/media';
 import CategoryViewer from 'src/widgets/categoryViewer';
+import { _Async } from 'src/shared/api/AsyncClient';
 
 type ProductPhoto = {
   thumbpath: string;
@@ -27,10 +27,10 @@ const HomePage: React.FC = () => {
     let alive = true;
     (async () => {
       try {
-        const prodRes = await http.get<Product[]>('/products');
+        const products = await _Async.get<Product[]>('/products');
         if (!alive) return;
 
-        setProducts(prodRes.data);
+        setProducts(products);
       } catch (e) {
         if (alive) console.error(toErrorMessage(e));
       } finally {

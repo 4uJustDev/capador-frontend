@@ -4,8 +4,8 @@ import type { ICategory } from 'src/entities';
 
 import { useEffect, useState } from 'react';
 import { Box, Spinner } from '@chakra-ui/react';
-import { http } from 'src/shared/api/http';
 import { toErrorMessage } from 'src/shared/api/error';
+import { _Async } from 'src/shared/api/AsyncClient';
 
 const CategoryViewer: React.FC = () => {
   const [categories, setCategories] = useState<ICategory[] | null>(null);
@@ -15,10 +15,10 @@ const CategoryViewer: React.FC = () => {
     let alive = true;
     (async () => {
       try {
-        const prodRes = await http.get<ICategory[]>('/categories/tree');
+        const categories = await _Async.get<ICategory[]>('/categories/tree');
         if (!alive) return;
 
-        setCategories(prodRes.data);
+        setCategories(categories);
       } catch (e) {
         if (alive) console.error(toErrorMessage(e));
       } finally {

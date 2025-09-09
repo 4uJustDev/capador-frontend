@@ -1,20 +1,7 @@
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosError } from 'axios';
-
-export type RequestOpts = {
-  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-  path: string;
-  params?: Record<string, unknown>;
-  data?: unknown;
-  headers?: Record<string, string>;
-  signal?: AbortSignal;
-};
-
-const http: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  timeout: 15000,
-});
+import axios, { type AxiosRequestConfig, type AxiosError, type AxiosInstance } from 'axios';
 
 export type ApiError = { status?: number; code?: string; message: string; details?: unknown };
+
 export function toApiError(err: unknown): ApiError {
   const e = err as AxiosError<any>;
   if (e?.isAxiosError) {
@@ -28,17 +15,22 @@ export function toApiError(err: unknown): ApiError {
   return { message: err instanceof Error ? err.message : String(err) };
 }
 
+const http = axios.create({
+  baseURL: import.meta.env.DEV ? '/api/project2' : import.meta.env.VITE_API_BASE_URL!,
+  timeout: 15000,
+});
+
 class AsyncClient {
-  private http: AxiosInstance;
   private token: string | null = null;
+  private http: AxiosInstance;
 
   constructor(http: AxiosInstance) {
-    this.http = http;
-
     const userToken = localStorage.getItem('token');
     if (userToken) {
       this.token = userToken;
     }
+
+    this.http = http;
   }
 
   setAuthToken(token: string | null) {
@@ -55,45 +47,29 @@ class AsyncClient {
     return this.token;
   }
 
-  private async core<T>(opts: RequestOpts, auth: boolean): Promise<T> {
+  private async core<T>(opts: AxiosRequestConfig, auth: boolean = false): Promise<T> {
     try {
-      const config: AxiosRequestConfig = {
-        method: opts.method,
-        url: opts.path,
-        params: opts.params,
-        data: opts.data,
-        headers: { ...(opts.headers ?? {}) },
-        signal: opts.signal,
-      };
-
       if (auth && this.token) {
-        (config.headers as any).Authorization = `Bearer ${this.token}`;
+        (opts.headers as any).Authorization = `Bearer ${this.token}`;
       }
-      const res = await this.http.request<T>(config);
-      return res.data as T;
+
+      const response = await this.http.request<T>(opts);
+
+      return response.data;
     } catch (e) {
       throw toApiError(e);
     }
   }
 
-  request<T>(opts: RequestOpts) {
-    return this.core<T>(opts, false);
+  request<T>(opts: AxiosRequestConfig) {
+    return this.core<T>(opts);
   }
-  requestAuth<T>(opts: RequestOpts) {
+  requestAuth<T>(opts: AxiosRequestConfig) {
     return this.core<T>(opts, true);
   }
 
-  get<T>(path: string, o: Omit<RequestOpts, 'method' | 'path'> = {}) {
-    return this.request<T>({ ...o, method: 'GET', path });
-  }
-  getAuth<T>(path: string, o: Omit<RequestOpts, 'method' | 'path'> = {}) {
-    return this.requestAuth<T>({ ...o, method: 'GET', path });
-  }
-  postAuth<T>(path: string, data?: unknown, o: Omit<RequestOpts, 'method' | 'path' | 'data'> = {}) {
-    return this.requestAuth<T>({ ...o, method: 'POST', path, data });
-  }
-  post<T>(path: string, data?: unknown, o: Omit<RequestOpts, 'method' | 'path' | 'data'> = {}) {
-    return this.request<T>({ ...o, method: 'POST', path, data });
+  get<T>(path: string, opts: Omit<AxiosRequestConfig, 'method' | 'data' | 'url'> = {}) {
+    return this.request<T>({ ...opts, url: path, method: 'get' });
   }
 }
 
